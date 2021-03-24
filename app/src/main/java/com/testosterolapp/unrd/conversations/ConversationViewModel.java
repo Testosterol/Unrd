@@ -14,6 +14,10 @@ import com.testosterolapp.unrd.data.Chats;
 import com.testosterolapp.unrd.db.Database;
 import com.testosterolapp.unrd.db.ResultDao;
 
+
+/**
+ * decided to opt out from ViewModel and went with basic recyclerView
+ */
 public class ConversationViewModel extends AndroidViewModel {
 
     public LiveData<PagedList<Chats>> allConversations;
