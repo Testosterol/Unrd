@@ -7,12 +7,12 @@ import androidx.room.PrimaryKey
 class Status {
 
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id_status: Int = 0
 
-    var code: Int = 0
+    var code: Long = 0
     var message: String = ""
 
-    constructor(code: Int, message: String) {
+    constructor(code: Long, message: String) {
         this.code = code
         this.message = message
     }

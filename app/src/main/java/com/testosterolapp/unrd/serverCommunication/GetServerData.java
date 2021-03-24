@@ -33,7 +33,6 @@ public class GetServerData {
                 e.printStackTrace();
             }
 
-            // Small Kotlin part
             DbUtil.Companion.launchCoroutineForInsertHeadlineIntoDatabase(jsonObject, context);
 
         }, error -> Log.e(TAG, "Failed to retrieve server data" + error)) {

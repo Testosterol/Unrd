@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/mainFragment"
+    tools:ignore="UnusedNavigation">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.testosterolapp.unrd.main.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_splashScreenActivity"
+            app:destination="@id/splashScreenActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/introVideoFragment"
+        android:name="com.testosterolapp.unrd.main.IntroVideoFragment"
+        android:label="fragment_intro_video"
+        tools:layout="@layout/fragment_intro_video" />
+    <activity
+        android:id="@+id/splashScreenActivity"
+        android:name="com.testosterolapp.unrd.main.SplashScreenActivity"
+        android:label="SplashScreenActivity" />
+
+</navigation>

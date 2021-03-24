@@ -3,10 +3,12 @@ package com.testosterolapp.unrd.db
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.testosterolapp.unrd.data.Result
-import com.testosterolapp.unrd.data.Status
+import com.testosterolapp.unrd.data.*
 
-@androidx.room.Database(entities = [Result::class, Status::class], version = 1, exportSchema = false)
+@androidx.room.Database(entities = [Result::class, Status::class,
+    BackgroundImage::class, Characters::class, Chats::class, Contacts::class,
+    Data::class, Events::class, Image::class, IntroVideo::class, ListImage::class,
+    PreviewMedia::class, PurchasedItems::class, Timelines::class], version = 1, exportSchema = false)
 abstract class Database : RoomDatabase() {
 
     abstract fun statusDao(): StatusDao?

@@ -1,7 +1,20 @@
 package com.testosterolapp.unrd.data
 
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+
+
+@Entity(foreignKeys = [ForeignKey(entity = Events::class,
+        parentColumns = arrayOf("id_events"),
+        childColumns = arrayOf("id_fk_events"),
+        onDelete = ForeignKey.CASCADE)])
 class Data {
 
+    @PrimaryKey(autoGenerate = true)
+    var id_data: Int = 0
+
+    var id_fk_events: Long? = 0
     var chat_message_id: Long? = null
     var chat_id: Long? = null
     var character_id: Long? = null
@@ -20,11 +33,8 @@ class Data {
     var thumb_resource_id: Long? = null
     var owned: Boolean? = null
 
-    constructor(chat_message_id: Long?, chat_id: Long?, character_id: Long?, media_duration: Long?,
-                content: String?, url_label: String?, sequence: Long?, price: Long?,
-                is_locked: Boolean?, has_options: Boolean?, options_timeout: Long?,
-                created: String?, updated: String?, has_url: Boolean?, resource_id: Long?,
-                thumb_resource_id: Long?, owned: Boolean?) {
+    constructor(id_fk_events: Long?, chat_message_id: Long?, chat_id: Long?, character_id: Long?, media_duration: Long?, content: String?, url_label: String?, sequence: Long?, price: Long?, is_locked: Boolean?, has_options: Boolean?, options_timeout: Long?, created: String?, updated: String?, has_url: Boolean?, resource_id: Long?, thumb_resource_id: Long?, owned: Boolean?) {
+        this.id_fk_events = id_fk_events
         this.chat_message_id = chat_message_id
         this.chat_id = chat_id
         this.character_id = character_id
