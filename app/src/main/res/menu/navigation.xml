@@ -1,0 +1,40 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="call.message.sms.Main.MainActivity">
+
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_test"
+        android:title="Search"
+        android:orderInCategory="1"
+        app:showAsAction="always"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"  />
+
+    <item
+        android:id="@+id/action_call"
+        android:icon="@drawable/ic_phone_test"
+        android:title="Call"
+        android:orderInCategory="2"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_more"
+        android:orderInCategory="4"
+        android:title="Settings" />
+
+    <item
+        android:id="@+id/action_delete_thread"
+        android:title="Delete thread"
+        />
+    <item
+        android:id="@+id/action_add_to_people"
+        android:title="Add to people"
+        />
+
+
+
+</menu>

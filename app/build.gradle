@@ -24,8 +24,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
 
@@ -49,13 +53,28 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.4'
-    implementation 'androidx.navigation:navigation-ui:2.3.4'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.paging:paging-runtime:2.1.2'
-    implementation 'com.google.code.gson:gson:2.8.6'
 
+    // Navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.4'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'
+
+    // ViewModelScope
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+
+    //LifeCycleScope
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    //LiveDataSccope
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
+
+    // Paging
+    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
+
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     // picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -74,6 +93,10 @@ dependencies {
 
     // volley
     implementation 'com.android.volley:volley:1.2.0'
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 
     // testing libs
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

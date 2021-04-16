@@ -26,7 +26,9 @@ class IntroVideo {
     var resource_progress: Long? = null
 
 
-    constructor(id_fk_result: Int, resource_id: Long?, resource_fid: String?, resource_type: String?, resource_uri: String?, resource_preset: String?, resource_processed: Boolean?, resource_progress: Long?) {
+    constructor(id_fk_result: Int, resource_id: Long?, resource_fid: String?,
+                resource_type: String?, resource_uri: String?, resource_preset: String?,
+                resource_processed: Boolean?, resource_progress: Long?) {
         this.id_fk_result = id_fk_result
         this.resource_id = resource_id
         this.resource_fid = resource_fid

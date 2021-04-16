@@ -1,12 +1,11 @@
-package com.testosterolapp.unrd.main;
+package com.testosterolapp.unrd.main
 
-import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.testosterolapp.unrd.R;
-import com.testosterolapp.unrd.db.DaoRepository;
-
+import android.net.Uri
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import com.testosterolapp.unrd.R
+import java.util.*
 
 /**
  * The idea - I have combined some Kotlin with Java classes to showcase my experience in both.
@@ -21,7 +20,7 @@ import com.testosterolapp.unrd.db.DaoRepository;
  * I have used coroutines for some background work, mainly for inserting the data. Few unit and
  * database tests are present as well
  *
- *The app is very basic due to limited time horizon. It contains 3 main screens:
+ * The app is very basic due to limited time horizon. It contains 3 main screens:
  *
  * 1. First screen as seen on Image_1 - is welcoming/greeting screen for a user with small
  * generic animation and some sample text with two buttons. Enter button will trigger the intro video
@@ -39,21 +38,24 @@ import com.testosterolapp.unrd.db.DaoRepository;
  * as seen on Image_4
  *
  */
-
-
-
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteractionListener {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        setupNavigationComponent()
     }
 
+    private fun setupNavigationComponent() {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
+        if (navHostFragment != null) {
+            val navController = navHostFragment.navController
+            val navInflater = navController.navInflater
+            val graph = navInflater.inflate(R.navigation.navigation)
+            navHostFragment.navController.setGraph(graph)
+        }
+    }
 
-
-
-
-
+    override fun onFragmentInteraction(uri: Uri?) {
+        TODO("Not yet implemented")
+    }
 }
-

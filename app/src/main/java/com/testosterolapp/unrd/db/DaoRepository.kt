@@ -40,29 +40,42 @@ class DaoRepository {
     }
 
 
-    fun insertCharacters(characters: Characters, onComplete: onInsertCharactersComplete?) {
+    fun insertCharacters(characters: Characters, onComplete: OnInsertCharactersComplete?) {
         CoroutineScope(Dispatchers.IO).launch {
             onComplete?.onComplete(resultDao?.insert(characters)!!)
         }
 
     }
 
-    interface onInsertCharactersComplete {
+    interface OnInsertCharactersComplete {
         suspend fun onComplete(characters: Long)
     }
 
 
-    fun insertTimelines(timelines: Timelines, onComplete: onInsertTimelinesComplete?) {
+    fun insertTimelines(timelines: Timelines, onComplete: OnInsertTimelinesComplete?) {
         CoroutineScope(Dispatchers.IO).launch {
             onComplete?.onComplete(resultDao?.insert(timelines)!!)
         }
 
     }
 
-    interface onInsertTimelinesComplete {
+    interface OnInsertTimelinesComplete {
         suspend fun onComplete(timelines: Long)
     }
 
+    fun insertDataShares(dataShares: DataShares, onComplete: OnInsertDataSharesComplete?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            onComplete?.onComplete(resultDao?.insert(dataShares)!!)
+        }
+    }
+
+    interface OnInsertDataSharesComplete {
+        suspend fun onComplete(dataShares: Long)
+    }
+
+    suspend fun insertMedia(media: Media): Long {
+        return resultDao?.insert(media)!!
+    }
 
     suspend fun insertContacts(contacts: Contacts): Long {
         return resultDao?.insert(contacts)!!
@@ -76,14 +89,13 @@ class DaoRepository {
         return resultDao?.insert(image)!!
     }
 
-    fun insertEventsOfTimeline(events: Events, onComplete: onInsertEventsComplete?) {
+    fun insertEventsOfTimeline(events: Events, onComplete: OnInsertEventsComplete?) {
         CoroutineScope(Dispatchers.IO).launch {
             onComplete?.onComplete(resultDao?.insert(events)!!)
         }
-
     }
 
-    interface onInsertEventsComplete {
+    interface OnInsertEventsComplete {
         suspend fun onComplete(events: Long)
     }
 
@@ -99,29 +111,59 @@ class DaoRepository {
         return statusDao?.insert(status)!!
     }
 
-    fun getAllMessagesBasedOnConversationId(conversation_id: Long): List<Data?>? {
+    fun getAllMessagesBasedOnConversationId(conversation_id: Long): List<Data>? {
         return resultDao?.getAllMessagesBasedOnConversationId(conversation_id)
     }
 
-    fun getBodyOfLastMessage(conversation_id: Long?): String? {
-        return resultDao?.getBodyOfLastMessage(conversation_id)
+    fun getAllMessagesCountBasedOnConversationId(conversation_id: Long, onComplete: OnGetAllMessagesCountBasedOnConversationId?) {
+        CoroutineScope(Dispatchers.Main).launch {
+            onComplete?.onComplete(resultDao?.getAllMessagesCountBasedOnConversationId(conversation_id))
+        }
     }
 
-    fun getImageOfCharacter(character_id: Long?, onComplete: onGetImageOfCharacter?) {
+    interface OnGetAllMessagesCountBasedOnConversationId {
+        suspend fun onComplete(count: Long?)
+    }
+
+
+    fun getBodyOfLastMessage(conversation_id: Long?, onComplete: OnGetBodyOfLastMessage?) {
+        CoroutineScope(Dispatchers.Main).launch {
+            onComplete?.onComplete(resultDao?.getBodyOfLastMessage(conversation_id))
+        }
+    }
+
+    interface OnGetBodyOfLastMessage {
+        suspend fun onComplete(body: String?)
+    }
+
+    fun getDateOfLastMessage(conversation_id: Long?, onComplete: OnGetDateOfLastMessage?) {
+        CoroutineScope(Dispatchers.Main).launch {
+            onComplete?.onComplete(resultDao?.getDateOfLastMessage(conversation_id))
+        }
+    }
+
+    interface OnGetDateOfLastMessage {
+        suspend fun onComplete(date: String?)
+    }
+
+    fun getImageOfCharacter(character_id: Long?, onComplete: OnGetImageOfCharacter?) {
         CoroutineScope(Dispatchers.Main).launch {
             onComplete?.onComplete(resultDao?.getImageOfCharacter(character_id))
         }
     }
 
-    interface onGetImageOfCharacter {
+    interface OnGetImageOfCharacter {
         suspend fun onComplete(uri: String?)
     }
 
-    fun getIntroVideo(onComplete: onGetIntroVideoComplete?) {
+    fun getIntroVideo(onComplete: OnGetIntroVideoComplete?) {
         CoroutineScope(Dispatchers.IO).launch {
             resultDao?.getIntroVideo()?.let { onComplete?.onComplete(it) }
         }
+    }
 
+    interface OnGetIntroVideoComplete {
+        suspend fun onComplete(uri: String)
     }
 
     fun getMainCharId(): Long? {
@@ -140,8 +182,5 @@ class DaoRepository {
         return resultDao?.getAllDataBasedOnChatId(chat_id)
     }
 
-    interface onGetIntroVideoComplete {
-        suspend fun onComplete(uri: String)
-    }
 
 }

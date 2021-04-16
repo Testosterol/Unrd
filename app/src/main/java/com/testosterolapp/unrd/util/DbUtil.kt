@@ -3,14 +3,16 @@ package com.testosterolapp.unrd.util
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
+import com.testosterolapp.unrd.R
 import com.testosterolapp.unrd.data.*
 import com.testosterolapp.unrd.db.DaoRepository
-import com.testosterolapp.unrd.db.DaoRepository.onInsertTimelinesComplete
+import com.testosterolapp.unrd.db.DaoRepository.OnInsertTimelinesComplete
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
+
 
 class DbUtil {
 
@@ -18,17 +20,17 @@ class DbUtil {
 
         val TAG: String = DbUtil::class.java.simpleName
 
-        fun launchCoroutineForInsertHeadlineIntoDatabase(data: JSONObject, context: Context) {
+        fun launchCoroutineForInsertDataIntoDatabase(dataJSONObject: JSONObject, context: Context) {
             CoroutineScope(Dispatchers.IO).launch {
-                insertIntoDatabase(data, context)
+                insertIntoDatabase(dataJSONObject, context)
             }
         }
 
-        private suspend fun insertIntoDatabase(data: JSONObject, context: Context) {
-            if (data.toString() != "{}") { // (tl;dr does the same job as empty check, saves memory)
-                insert(data, context)
+        private suspend fun insertIntoDatabase(dataJSONObject: JSONObject, context: Context) {
+            if (dataJSONObject.toString() != "{}") { // (tl;dr does the same job as empty check, saves memory)
+                insert(dataJSONObject, context)
             } else {
-                Log.d(TAG, "data: $data")
+                Log.d(TAG, "data: $dataJSONObject")
             }
         }
 
@@ -41,13 +43,15 @@ class DbUtil {
             daoRepository.insertStatus(status)
 
             // result
-            val result = data.getJSONObject("result")
+            val result = data.getJSONObject(context.getString(R.string.result))
             insertResultIntoDatabase(result, daoRepository)
         }
 
+        /**
+         * GSON conversion necessary due to the primitive data type exceptions in standard JSON functions
+         */
         private suspend fun insertResultIntoDatabase(result: JSONObject, daoRepository: DaoRepository) {
-            val gson = Gson()
-            val resultItemGsonConverted = gson.fromJson(result.toString(), Result::class.java)
+            val resultItemGsonConverted = Gson().fromJson(result.toString(), Result::class.java)
             val resultItem = Result(resultItemGsonConverted.story_id,
                     resultItemGsonConverted.language_id,
                     resultItemGsonConverted.genre_id,
@@ -80,16 +84,18 @@ class DbUtil {
                     resultItemGsonConverted.progress
             )
             val resultId = daoRepository.insertResult(resultItem)
+            insertSubArraysIntoDatabase(resultId, result, daoRepository)
+        }
 
-            insertIntroVideoIntoDatabase(resultId.toInt(), result.getJSONArray("intro_video"), daoRepository)
+        private suspend fun insertSubArraysIntoDatabase(resultId: Long, result: JSONObject, daoRepository: DaoRepository) {
+            insertIntroVideoIntoDatabase(result.getJSONArray("intro_video"), daoRepository)
             insertListImagesIntoDatabase(resultId, result.getJSONArray("list_image"), daoRepository)
             insertPreviewMediaIntoDatabase(resultId, result.getJSONArray("preview_media"), daoRepository)
             insertBackgroundImageIntoDatabase(resultId, result.getJSONArray("background_image"), daoRepository)
             insertCharactersIntoDatabase(resultId, result.getJSONArray("characters"), daoRepository)
             insertContactsIntoDatabase(resultId, result.getJSONArray("contacts"), daoRepository)
-            inserPurchasedItemsIntoDatabase(resultId, result.getJSONArray("purchased_items"), daoRepository)
+            insertPurchasedItemsIntoDatabase(resultId, result.getJSONArray("purchased_items"), daoRepository)
             insertTimelineIntoDatabase(resultId, result.getJSONArray("timelines"), daoRepository)
-
         }
 
 
@@ -117,6 +123,7 @@ class DbUtil {
 
         private suspend fun insertEventsOfTimelinesIntoDatabase(eventsArray: JSONObject, timelinesIdFk: Long,
                                                                 daoRepository: DaoRepository) {
+            Log.d("kekbr", "YOOOOOOOOOOOOOOOO: ")
             val eventsJsonArray = eventsArray.getJSONArray("events")
             for (j in 0 until eventsJsonArray.length()) {
                 val gson = Gson()
@@ -125,11 +132,59 @@ class DbUtil {
                         gsonConverter.sequence,
                         gsonConverter.has_options,
                         timelinesIdFk)
-                daoRepository.insertEventsOfTimeline(eventsToInsert, object : DaoRepository.onInsertEventsComplete {
+                daoRepository.insertEventsOfTimeline(eventsToInsert, object : DaoRepository.OnInsertEventsComplete {
                     override suspend fun onComplete(events: Long) {
-                        InsertDataOfEventsOfTimlinesIntoDatabase(events, eventsJsonArray.getJSONObject(j).getJSONObject("data") , daoRepository)
+                        Log.d("kekbr", "type: " + eventsJsonArray.getJSONObject(j).getString("type"))
+                        if(eventsJsonArray.getJSONObject(j).getString("type").equals("character_shares")){
+                            InsertDataSharesOfEventsOfTimlinesIntoDatabase(events, eventsJsonArray.getJSONObject(j).getJSONObject("data"), daoRepository)
+                        }else{
+                            InsertDataOfEventsOfTimlinesIntoDatabase(events, eventsJsonArray.getJSONObject(j).getJSONObject("data"), daoRepository)
+                        }
                     }
                 })
+            }
+        }
+
+        private suspend fun InsertDataSharesOfEventsOfTimlinesIntoDatabase(eventsIdFk: Long?, dataSharesJSONObject: JSONObject, daoRepository: DaoRepository) {
+            val gson = Gson()
+            val gsonConverter = gson.fromJson(dataSharesJSONObject.toString(), DataShares::class.java)
+            val dataSharesOfAnEvent = DataShares(
+                    eventsIdFk,
+                    gsonConverter.character_share_id,
+                    gsonConverter.character_id,
+                    gsonConverter.media_duration,
+                    gsonConverter.stream_path,
+                    gsonConverter.sequence,
+                    gsonConverter.duration,
+                    gsonConverter.price,
+                    gsonConverter.is_locked,
+                    gsonConverter.is_live,
+                    gsonConverter.is_public,
+                    gsonConverter.created,
+                    gsonConverter.updated,
+                    gsonConverter.resource_id)
+            daoRepository.insertDataShares(dataSharesOfAnEvent, object : DaoRepository.OnInsertDataSharesComplete {
+                override suspend fun onComplete(dataShares: Long) {
+                    InsertMediaOfDataSharesIntoDatabase(gsonConverter.character_id, dataShares, dataSharesJSONObject.getJSONArray("media"), daoRepository)
+                }
+            })
+        }
+
+        private suspend fun InsertMediaOfDataSharesIntoDatabase(char_id: Long?, dataShares: Long, jsonArray: JSONArray, daoRepository: DaoRepository) {
+            for (j in 0 until jsonArray.length()) {
+                val gson = Gson()
+                val gsonConverter = gson.fromJson(jsonArray[j].toString(), Media::class.java)
+                val media = Media(
+                        char_id,
+                        gsonConverter.resource_id,
+                        gsonConverter.resource_fid,
+                        gsonConverter.resource_type,
+                        gsonConverter.resource_uri,
+                        gsonConverter.resource_preset,
+                        gsonConverter.resource_processed,
+                        gsonConverter.resource_progress,
+                        dataShares)
+                daoRepository.insertMedia(media)
             }
         }
 
@@ -138,9 +193,9 @@ class DbUtil {
             daoRepository.insertImagesOfCharacter(getImagesOfCharacters(image, characterId, fk))
         }
 
-        private suspend fun inserPurchasedItemsIntoDatabase(resultId: Long,
-                                                            purchasedItems: JSONArray,
-                                                            daoRepository: DaoRepository) {
+        private suspend fun insertPurchasedItemsIntoDatabase(resultId: Long,
+                                                             purchasedItems: JSONArray,
+                                                             daoRepository: DaoRepository) {
             for (j in 0 until purchasedItems.length()) {
                 val gson = Gson()
                 val gsonConverter = gson.fromJson(purchasedItems[j].toString(), PurchasedItems::class.java)
@@ -172,7 +227,7 @@ class DbUtil {
                         gsonConverter.character_id,
                         gsonConverter.name,
                         gsonConverter.is_main)
-                daoRepository.insertCharacters(characterToInsert, object : DaoRepository.onInsertCharactersComplete {
+                daoRepository.insertCharacters(characterToInsert, object : DaoRepository.OnInsertCharactersComplete {
                     override suspend fun onComplete(characters: Long) {
                         InsertImagesOfCharactersIntoDatabase(charactersJSONArray.getJSONObject(j).getJSONObject("image"), characters, daoRepository, gsonConverter.character_id!!)
                     }
@@ -200,8 +255,7 @@ class DbUtil {
             }
         }
 
-        private suspend fun insertIntroVideoIntoDatabase(resultId: Int,
-                                                         introVideo: JSONArray,
+        private suspend fun insertIntroVideoIntoDatabase(introVideo: JSONArray,
                                                          daoRepository: DaoRepository) {
             for (j in 0 until introVideo.length()) {
                 val gson = Gson()
@@ -271,7 +325,7 @@ class DbUtil {
                         gsonConverter.created,
                         gsonConverter.updated
                 )
-                daoRepository.insertTimelines(timelinesToInsert, object : onInsertTimelinesComplete {
+                daoRepository.insertTimelines(timelinesToInsert, object : OnInsertTimelinesComplete {
                     override suspend fun onComplete(timelines: Long) {
                         insertChatsOfTimelinesIntoDatabase(timelineJsonArray[j] as JSONObject, timelines, daoRepository)
                         insertEventsOfTimelinesIntoDatabase(timelineJsonArray[j] as JSONObject, timelines, daoRepository)

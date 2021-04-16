@@ -24,7 +24,9 @@ class Image {
     var resource_processed: Boolean? = false
     var resource_progress: Long? = null
 
-    constructor(id_fk_character: Long?, char_id: Long?, resource_id: Long?, resource_fid: String?, resource_type: String?, resource_uri: String?, resource_preset: String?, resource_processed: Boolean?, resource_progress: Long?) {
+    constructor(id_fk_character: Long?, char_id: Long?, resource_id: Long?,
+                resource_fid: String?, resource_type: String?, resource_uri: String?,
+                resource_preset: String?, resource_processed: Boolean?, resource_progress: Long?) {
         this.id_fk_character = id_fk_character
         this.char_id = char_id
         this.resource_id = resource_id

@@ -26,7 +26,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center"
-        android:background="@drawable/ic_baseline_local_phone_24"
+        android:background="@drawable/ic_search_test"
         android:gravity="center_horizontal|center_vertical"
         android:visibility="visible"/>
 

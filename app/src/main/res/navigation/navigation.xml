@@ -12,17 +12,36 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
-            android:id="@+id/action_mainFragment_to_splashScreenActivity"
-            app:destination="@id/splashScreenActivity" />
+            android:id="@+id/action_mainFragment_to_splashScreenFragment"
+            app:destination="@id/splashScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/splashScreenFragment"
+        android:name="com.testosterolapp.unrd.intro.SplashScreenFragment"
+        android:label="fragment_splash_screen"
+        tools:layout="@layout/fragment_splash_screen" >
+        <action
+            android:id="@+id/action_splashScreenFragment_to_introVideoFragment"
+            app:destination="@id/introVideoFragment"
+            app:popUpTo="@id/splashScreenFragment" />
+        <action
+            android:id="@+id/action_splashScreenFragment_to_conversationsFragment"
+            app:destination="@id/conversationsFragment"
+            app:popUpTo="@id/splashScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/introVideoFragment"
-        android:name="com.testosterolapp.unrd.main.IntroVideoFragment"
-        android:label="fragment_intro_video"
-        tools:layout="@layout/fragment_intro_video" />
-    <activity
-        android:id="@+id/splashScreenActivity"
-        android:name="com.testosterolapp.unrd.main.SplashScreenActivity"
-        android:label="SplashScreenActivity" />
+        android:name="com.testosterolapp.unrd.intro.IntroVideoFragment"
+        android:label="fragment_intro_video" >
+        <action
+            android:id="@+id/action_introVideoFragment_to_conversationsFragment"
+            app:destination="@id/conversationsFragment"
+            app:popUpTo="@id/introVideoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/conversationsFragment"
+        android:name="com.testosterolapp.unrd.conversations.ConversationsFragment"
+        android:label="fragment_conversations"
+        tools:layout="@layout/fragment_conversations" />
 
 </navigation>

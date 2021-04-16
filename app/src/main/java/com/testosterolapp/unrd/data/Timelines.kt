@@ -22,7 +22,8 @@ class Timelines {
     var updated: String? = null
 
 
-    constructor(id_fk_result: Long?, timeline_id: Long?, name: String?, is_primary: Boolean?, is_terminal: Boolean?, created: String?, updated: String?) {
+    constructor(id_fk_result: Long?, timeline_id: Long?, name: String?, is_primary: Boolean?,
+                is_terminal: Boolean?, created: String?, updated: String?) {
         this.id_fk_result = id_fk_result
         this.timeline_id = timeline_id
         this.name = name
